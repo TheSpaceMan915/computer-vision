@@ -3,12 +3,12 @@ package app;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ImageAPITest {
+public class OpenCVLoaderTest {
 
     @Test
     public void testOpenCVInitialisation() {
         System.out.println("OpenCV initialisation test started");
-        assertDoesNotThrow(ImageAPI::new);
+        assertDoesNotThrow(OpenCVLoader::new);
         System.out.println("OpenCV initialisation test finished");
     }
 }
