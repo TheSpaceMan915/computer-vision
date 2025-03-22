@@ -7,7 +7,7 @@
 <!--        </Console>-->
 
         <!-- File Appender -->
-        <File name="FileLogger" fileName="logs/app.log">
+        <File name="FileLogger" fileName="assignment1/logs/app.log">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %c{1} - %msg%n</Pattern>
             </PatternLayout>
