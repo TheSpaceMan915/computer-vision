@@ -1,0 +1,6 @@
+2025-03-25 12:14:37 [main] INFO  AppConfig - environment.properties file was successfully loaded
+2025-03-25 12:14:37 [main] INFO  OpenCVLoader - OpenCV was successfully loaded
+2025-03-25 12:14:37 [main] INFO  OpenCVLoader - OpenCV version '4.9.0'
+2025-03-25 12:14:37 [main] INFO  OpenCVLoader - OS 'Mac OS X'
+2025-03-25 12:14:37 [main] INFO  ImageService - Loading image from '/Users/jackyokov/IdeaProjects/computer-vision/assignment2/src/main/resources/images/billie_jean.jpg'
+2025-03-25 12:14:37 [main] INFO  ImageService - The image was successfully loaded

@@ -1,9 +1,7 @@
 package app;
 
 import lombok.extern.log4j.Log4j2;
-
 import nu.pattern.OpenCV;
-
 import org.opencv.core.Core;
 
 /*
@@ -24,9 +22,5 @@ public class OpenCVLoader {
         } catch (Exception exception) {
             log.error("Failed to load OpenCV", exception);
         }
-    }
-
-    public static void main(String[] args) {
-        OpenCVLoader loader = new OpenCVLoader();
     }
 }
