@@ -1,7 +1,9 @@
 package app;
 
 import lombok.extern.log4j.Log4j2;
+
 import nu.pattern.OpenCV;
+
 import org.opencv.core.Core;
 
 /*

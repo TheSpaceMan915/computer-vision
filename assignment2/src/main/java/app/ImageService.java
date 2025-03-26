@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /*
-* Provides functionality to process images
+* Provides functionality to process images.
 */
 @Log4j2
 public class ImageService {

@@ -12,14 +12,14 @@ import java.util.Properties;
 * used in the app.
 */
 @Log4j2
-public class AppConfig {
+public class Config {
 
     private final Properties properties = new Properties();
 
     /*
     * Load the environment properties from the environment.properties file.
     */
-    public AppConfig() {
+    public Config() {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("environment.properties")) {
             if (input == null) {
                 log.warn("Could not find environment.properties file in resources");
