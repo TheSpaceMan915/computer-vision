@@ -15,16 +15,14 @@ import java.nio.file.Paths;
 @Log4j2
 public class ImageService {
 
-    private final Config config = new Config();
-
     /*
-    * Load an image from an absolute path.
-    * */
-    public Mat loadImage(String imagePath) {
+    * Read an image from a specified path.
+    */
+    public Mat readImage(String imagePath) {
         Path path = Paths.get(imagePath);
-        log.info("Loading image from '{}'", path);
+        log.info("Loading the image from '{}'", path);
         if (!Files.exists(path)) {
-            log.warn("Could not find image at '{}'", path);
+            log.warn("Could not find the image at '{}'", path);
             return null;
         }
         log.info("The image was successfully loaded");
@@ -32,8 +30,22 @@ public class ImageService {
     }
 
     /*
+    * Save an image to a specified path.
+    */
+    public boolean writeImage(Mat image, String imagePath) {
+        log.info("Saving the image to '{}'", imagePath);
+        boolean isSaved = Imgcodecs.imwrite(imagePath, image);
+        if (!isSaved) {
+            log.warn("Could not save the image at '{}'", imagePath);
+            return false;
+        }
+        log.info("The image was successfully saved");
+        return isSaved;
+    }
+
+    /*
      * Make bytes of a specified channel null.
-     * */
+     */
     public Mat nullifyChannel(Mat image, int channel) {
 
 //        Convert an image to a byte array
@@ -44,9 +56,9 @@ public class ImageService {
 
         /*
         * Nullify the channel
-        * 1st channel = i + 3 - zero every 3rd value (i = 0)
-        * 2nd channel = i + 2 - zero every 2nd value (i = 0)
-        * 3rd channel = i + 3 - zero every 3rd value (i = 2)
+        * 1st channel = i + 3 - nullify every 3rd value (i = 0)
+        * 2nd channel = i + 2 - nullify every 2nd value (i = 0)
+        * 3rd channel = i + 3 - nullify every 3rd value (i = 2)
         */
         switch (channel) {
             case 1 -> {
@@ -72,11 +84,6 @@ public class ImageService {
         }
         image.put(0, 0, bytes);
         log.info("The image was successfully nullified");
-
-//        Save the processed image
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.PROCESSED_IMAGE_NAME));
-        Imgcodecs.imwrite(processedImagePath.toString(), image);
-        log.info("The processed image was successfully saved");
         return image;
     }
 }

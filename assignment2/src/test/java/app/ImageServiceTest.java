@@ -19,15 +19,25 @@ public class ImageServiceTest {
     private final ImageService imageService = new ImageService();
 
     @Test
-    void testImageLoading() {
+    void testReadImage() {
         Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.ORIG_IMAGE_NAME));
-        Mat image = imageService.loadImage(origImagePath.toString());
+        Mat image = imageService.readImage(origImagePath.toString());
     }
 
     @Test
     void testNullifyChannel() {
         Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.ORIG_IMAGE_NAME));
-        Mat image = imageService.loadImage(origImagePath.toString());
+        Mat image = imageService.readImage(origImagePath.toString());
         Mat processedImage = imageService.nullifyChannel(image, 1);
+    }
+
+    @Test
+    void testWriteImage() {
+        Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.ORIG_IMAGE_NAME));
+        Mat image = imageService.readImage(origImagePath.toString());
+        Mat processedImage = imageService.nullifyChannel(image, 3);
+
+        String processedImagePath = config.getProperty(Constants.IMAGE_DIR_PATH) + config.getProperty(Constants.PROCESSED_IMAGE_NAME);
+        imageService.writeImage(processedImage, processedImagePath);
     }
 }

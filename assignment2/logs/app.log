@@ -1,0 +1,10 @@
+2025-03-30 13:09:07 [JavaFX Application Thread] INFO  OpenCVLoader - OpenCV was successfully loaded
+2025-03-30 13:09:07 [JavaFX Application Thread] INFO  OpenCVLoader - OpenCV version '4.9.0'
+2025-03-30 13:09:07 [JavaFX Application Thread] INFO  OpenCVLoader - OS 'Mac OS X'
+2025-03-30 13:09:07 [JavaFX Application Thread] INFO  Config - environment.properties file was successfully loaded
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - Loading the image from '/Users/jackyokov/IdeaProjects/computer-vision/assignment2/src/main/resources/images/billie_jean.jpg'
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - The image was successfully loaded
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - Number bytes: 270000
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - The image was successfully nullified
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - Saving the image to '/Users/jackyokov/IdeaProjects/computer-vision/assignment2/src/main/resources/images/billie_jean_channel_nullified.jpg'
+2025-03-30 13:09:15 [JavaFX Application Thread] INFO  ImageService - The image was successfully saved
