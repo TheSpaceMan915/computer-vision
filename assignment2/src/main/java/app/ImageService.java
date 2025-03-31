@@ -26,7 +26,7 @@ public class ImageService {
             return null;
         }
         log.info("The image was successfully loaded");
-        return Imgcodecs.imread(path.toString());
+        return Imgcodecs.imread(path.toString(), Imgcodecs.IMREAD_UNCHANGED);
     }
 
     /*
@@ -47,7 +47,16 @@ public class ImageService {
      * Make bytes of a specified channel null.
      */
     public Mat nullifyChannel(Mat image, int channel) {
-
+        int channelNumber = image.channels();
+        log.debug("Number of channels '{}'", channelNumber);
+        if ((channel < 1) || (channel > 3)) {
+            log.warn("The channel number '{}' is out of range", channel);
+            log.warn("The channel number must be between 1 and 3");
+            return null;
+        } else if (channelNumber < channel) {
+            log.warn("This is a grayscale image, and it has only 1 channel");
+            return null;
+        }
 //        Convert an image to a byte array
         int numberBytes = (int) (image.total() * image.elemSize());
         log.info("Number bytes: {}", numberBytes);
@@ -75,11 +84,6 @@ public class ImageService {
                 for (int i = 2; i < numberBytes; i = i + 3) {
                     bytes[i] = 0;
                 }
-            }
-            default -> {
-                log.warn("The channel number '{}' is out of range", channel);
-                log.warn("The channel number must be between 1 and 3");
-                return image;
             }
         }
         image.put(0, 0, bytes);

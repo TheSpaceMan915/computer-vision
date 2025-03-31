@@ -35,7 +35,7 @@ public class ImageServiceTest {
     void testWriteImage() {
         Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.ORIG_IMAGE_NAME));
         Mat image = imageService.readImage(origImagePath.toString());
-        Mat processedImage = imageService.nullifyChannel(image, 3);
+        Mat processedImage = imageService.nullifyChannel(image, 1);
 
         String processedImagePath = config.getProperty(Constants.IMAGE_DIR_PATH) + config.getProperty(Constants.PROCESSED_IMAGE_NAME);
         imageService.writeImage(processedImage, processedImagePath);

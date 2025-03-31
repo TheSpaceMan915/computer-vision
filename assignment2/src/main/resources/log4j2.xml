@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>
-        <!-- Console Appender -->
+        <!-- Console appender: receives ALL logs (DEBUG+) -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %c{1} - %msg%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%-5level] %logger{36} - %msg%n"/>
         </Console>
 
-        <!-- File Appender -->
-        <File name="FileLogger" fileName="assignment2/logs/app.log">
-            <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %c{1} - %msg%n</Pattern>
-            </PatternLayout>
+        <!-- File appender: receives only INFO+ logs -->
+        <File name="FileAppender" fileName="assignment2/logs/app.log" append="true">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] %logger{36} - %msg%n"/>
+            <Filters>
+                <!-- Only include INFO and higher in file -->
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
         </File>
     </Appenders>
 
     <Loggers>
-        <!-- Root Logger -->
-        <Root level="info">
+        <Root level="DEBUG">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="FileLogger"/>
+            <AppenderRef ref="FileAppender"/>
         </Root>
     </Loggers>
 </Configuration>
