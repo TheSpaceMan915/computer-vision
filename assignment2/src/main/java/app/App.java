@@ -54,7 +54,7 @@ public class App extends Application {
 //        Run the image processing
         startButton.setOnAction(event -> {
             Mat image = imageService.readImage(origImagePath.toString());
-            Mat nullifiedImage = imageService.nullifyChannel(image, 1);
+            Mat nullifiedImage = imageService.nullifyChannel(image, Channel.RED);
             Path nullifiedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.PROCESSED_IMAGE_NAME));
             boolean isSaved = imageService.writeImage(nullifiedImage, nullifiedImagePath.toString());
             if (isSaved) {

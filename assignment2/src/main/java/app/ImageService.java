@@ -26,7 +26,7 @@ public class ImageService {
             return null;
         }
         log.info("The image was successfully loaded");
-        return Imgcodecs.imread(path.toString(), Imgcodecs.IMREAD_UNCHANGED);
+        return Imgcodecs.imread(path.toString());
     }
 
     /*
@@ -46,48 +46,30 @@ public class ImageService {
     /*
      * Make bytes of a specified channel null.
      */
-    public Mat nullifyChannel(Mat image, int channel) {
-        int channelNumber = image.channels();
-        log.debug("Number of channels '{}'", channelNumber);
-        if ((channel < 1) || (channel > 3)) {
-            log.warn("The channel number '{}' is out of range", channel);
-            log.warn("The channel number must be between 1 and 3");
-            return null;
-        } else if (channelNumber < channel) {
-            log.warn("This is a grayscale image, and it has only 1 channel");
-            return null;
-        }
+    public Mat nullifyChannel(Mat image, Channel channel) {
+
+//        Find a starting iteration index
+        int startIndex = switch (channel) {
+            case BLUE -> 0;
+            case GREEN -> 1;
+            case RED -> 2;
+        };
+
 //        Convert an image to a byte array
         int numberBytes = (int) (image.total() * image.elemSize());
-        log.info("Number bytes: {}", numberBytes);
+        log.info("Number of bytes: {}", numberBytes);
         byte[] bytes = new byte[numberBytes];
         image.get(0, 0, bytes);
 
-        /*
-        * Nullify the channel
-        * 1st channel = i + 3 - nullify every 3rd value (i = 0)
-        * 2nd channel = i + 2 - nullify every 2nd value (i = 0)
-        * 3rd channel = i + 3 - nullify every 3rd value (i = 2)
-        */
-        switch (channel) {
-            case 1 -> {
-                for (int i = 0; i < numberBytes; i = i + 3) {
-                    bytes[i] = 0;
-                }
-            }
-            case 2 -> {
-                for (int i = 0; i < numberBytes; i = i + 2) {
-                    bytes[i] = 0;
-                }
-            }
-            case 3 -> {
-                for (int i = 2; i < numberBytes; i = i + 3) {
-                    bytes[i] = 0;
-                }
-            }
+//        Nullify the channel
+        for (int i = startIndex; i < numberBytes; i += 3) {
+            bytes[i] = 0;
         }
-        image.put(0, 0, bytes);
+
+//       Convert a byte array to an image
+        Mat processedImage = new Mat(image.size(), image.type());
+        processedImage.put(0, 0, bytes);
         log.info("The image was successfully nullified");
-        return image;
+        return processedImage;
     }
 }
