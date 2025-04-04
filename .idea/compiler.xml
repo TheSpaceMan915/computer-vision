@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="assignment2" />
         <module name="assignment1" />
+        <module name="assignment3" />
       </profile>
     </annotationProcessing>
   </component>

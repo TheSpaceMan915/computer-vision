@@ -1,7 +1,5 @@
 package app;
 
-import lombok.extern.log4j.Log4j2;
-
 import org.junit.jupiter.api.Test;
 
 import org.opencv.core.Mat;
@@ -9,7 +7,6 @@ import org.opencv.core.Mat;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Log4j2
 public class ImageServiceTest {
 
     private final OpenCVLoader loader = new OpenCVLoader();
