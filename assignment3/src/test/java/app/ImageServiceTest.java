@@ -1,14 +1,17 @@
 package app;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class ImageServiceTest {
 
@@ -18,40 +21,117 @@ public class ImageServiceTest {
 
     private final ImageService imageService = new ImageService();
 
-    @Test
-    void testBGRToGrayscale() {
-        Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "grayscale_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Mat image = imageService.readImage(origImagePath.toString());
+    private Mat original1;
 
-        Mat grayscaleImage = imageService.BGRToGrayscale(image);
-        boolean isSaved = imageService.writeImage(grayscaleImage, processedImagePath.toString());
+    private Mat original2;
+
+    private Mat original3;
+
+    @BeforeEach
+    void readImages() {
+        Path origImagePath1 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
+        Path origImagePath2 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
+        Path origImagePath3 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
+
+        Optional<Mat> optOriginal1 = imageService.readImage(origImagePath1.toString());
+        Optional<Mat> optOriginal2 = imageService.readImage(origImagePath2.toString());
+        Optional<Mat> optOriginal3 = imageService.readImage(origImagePath3.toString());
+        Assertions.assertTrue(optOriginal1.isPresent());
+        Assertions.assertTrue(optOriginal2.isPresent());
+        Assertions.assertTrue(optOriginal3.isPresent());
+
+        original1 = optOriginal1.get();
+        original2 = optOriginal2.get();
+        original3 = optOriginal3.get();
+    }
+
+    @Test
+    void testConvertToGrayscale() {
+        Mat grayscale = imageService.convertToGrayscale(original1);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "grayscale_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(grayscale, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyGaussianBlur() {
-        Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
+        Mat blurred = imageService.applyGaussianBlur(original2, 3, 3);
         Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "blurred_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
-        Mat image = imageService.readImage(origImagePath.toString());
-
-        Mat blurredImage = imageService.applyGaussianBlur(image, new Size(3, 3));
-        boolean isSaved = imageService.writeImage(blurredImage, processedImagePath.toString());
+        boolean isSaved = imageService.writeImage(blurred, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplySobelOperator() {
-        Path origImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "Sobel_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
-        Mat image = imageService.readImage(origImagePath.toString());
+        Mat blurred = imageService.applyGaussianBlur(original3, 3, 3);
+        Mat grayscale = imageService.convertToGrayscale(blurred);
+        Mat edges = imageService.applySobelOperator(grayscale, CvType.CV_16S, 3);
+//        Mat edges = imageService.applySobelOperator(grayscale, CvType.CV_16S, 1);
+//        Mat edges = imageService.applySobelOperator(grayscale, CvType.CV_8U, 3);
 
-        Mat blurredImage = imageService.applyGaussianBlur(image, new Size(3, 3));
-        Mat grayscaleImage = imageService.BGRToGrayscale(blurredImage);
-        Mat edgeImage = imageService.applySobelOperator(grayscaleImage, CvType.CV_16S, 3);
-//        Mat edgeImage = imageService.applySobelOperator(grayscaleImage, CvType.CV_16S, 1);
-//        Mat edgeImage = imageService.applySobelOperator(grayscaleImage, CvType.CV_8U, 3);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "Sobel_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(edges, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testApplyLaplacianOperator() {
+        Mat blurred = imageService.applyGaussianBlur(original1, 3, 3);
+        Mat grayscale = imageService.convertToGrayscale(blurred);
+        Mat edgeImage = imageService.applyLaplacianOperator(grayscale, CvType.CV_16S, 3);
+//        Mat edgeImage = imageService.applyLaplacianOperator(grayscale, CvType.CV_16S, 1);
+//        Mat edgeImage = imageService.applyLaplacianOperator(grayscale, CvType.CV_8U, 3);
+
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "Laplacian_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
         boolean isSaved = imageService.writeImage(edgeImage, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testFlip() {
+        Mat flipped = imageService.flip(original2, Axis.X);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "flipped_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(flipped, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testRepeat() {
+        Mat repeated = imageService.repeat(original3, 2, 2);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "repeated_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(repeated, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testHconcat() {
+        List<Mat> images = Arrays.asList(original2, original3);
+        Optional<Mat> optConcatenated = imageService.hconcat(images);
+        boolean isSaved = false;
+        if (optConcatenated.isPresent()) {
+            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "hconcatenated.jpg");
+            isSaved = imageService.writeImage(optConcatenated.get(), processedImagePath.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testVconcat() {
+        List<Mat> images = Arrays.asList(original1, original2, original3);
+        Optional<Mat> optConcatenated = imageService.vconcat(images);
+        boolean isSaved = false;
+        if (optConcatenated.isPresent()) {
+            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "vconcatenated.jpg");
+            isSaved = imageService.writeImage(optConcatenated.get(), processedImagePath.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testResize() {
+        Mat resized = imageService.resize(original1, 200, 100);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "resized_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(resized, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
 }
