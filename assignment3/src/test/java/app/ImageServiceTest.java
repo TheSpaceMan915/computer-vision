@@ -134,4 +134,20 @@ public class ImageServiceTest {
         boolean isSaved = imageService.writeImage(resized, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
+
+    @Test
+    void testRotateWithCropFalse() {
+        Mat rotated = imageService.rotate(original2, 90, false);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "rotated_with_crop_false_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(rotated, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testRotateWithCropTrue() {
+        Mat rotated = imageService.rotate(original2, 90, true);
+        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "rotated_with_crop_true_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
+        boolean isSaved = imageService.writeImage(rotated, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
 }
