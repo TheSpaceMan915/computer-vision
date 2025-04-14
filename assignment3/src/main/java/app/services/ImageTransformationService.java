@@ -8,6 +8,7 @@ import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /*
  * A service that provides image transformation functionality.
@@ -41,7 +42,7 @@ public class ImageTransformationService {
     }
 
     /*
-     * Resize an image down or up to the specified size.
+     * Resize an image down or up to a specified size.
      */
     public Mat resize(Mat image, int width, int height) {
         Mat resized = new Mat();
@@ -51,7 +52,7 @@ public class ImageTransformationService {
     }
 
     /*
-     * Rotate an image by the specified number of degrees.
+     * Rotate an image by a specified number of degrees.
      * If crop value is true, the image will be cropped and rotated.
      * Otherwise, the image will not be cropped, and the canvas
      * will be expanded to fit all content.
@@ -111,7 +112,7 @@ public class ImageTransformationService {
     }
 
     /*
-     * Translate an image by the specified number of pixels
+     * Translate an image by a specified number of pixels
      * along x and y axes.
      */
     public Mat translate(Mat image, int dx, int dy) {
@@ -126,5 +127,47 @@ public class ImageTransformationService {
         Imgproc.warpAffine(image, translated, transMat, image.size());
         log.info("The image was translated by ({}, {}) pixels", dx, dy);
         return translated;
+    }
+
+    /*
+    * Apply perspective transformation to an image
+    * with a specified offset.
+    */
+    public Optional<Mat> transformPerspective(Mat image, int dx, int dy) {
+        int width = image.width();
+        int height = image.height();
+
+//        Define source points
+        Point[] sourcePoints = new Point[] {
+                new Point(0, 0),                    // Top left corner
+                new Point(width - 1, 0),            // Top right corner
+                new Point(0, height - 1),           // Bottom left corner
+                new Point(width - 1, height - 1),   // Bottom right corner
+        };
+        MatOfPoint2f sourcePointMat = new MatOfPoint2f(sourcePoints);
+        log.debug("Source points: '{}'", Arrays.toString(sourcePoints));
+
+//        Define shifted destination points
+        Point[] destinationPoints = new Point[] {
+                new Point(0 + dx, 0 + dy),                  // Top left corner
+                new Point(width - 1 - dx, 0 + dy),          // Top right corner
+                new Point(0 + dx, height - 1 - dy),         // Bottom left corner
+                new Point(width - 1 - dx, height - 1 -dy),  // Bottom right corner
+        };
+        MatOfPoint2f destinationPointMat = new MatOfPoint2f(destinationPoints);
+        log.debug("Destination points: '{}'", Arrays.toString(destinationPoints));
+
+//        Compute the homography matrix
+        Mat homographyMat = Imgproc.getPerspectiveTransform(sourcePointMat, destinationPointMat);
+        if (homographyMat.empty()) {
+            log.error("Could not compute the homography matrix");
+            return Optional.empty();
+        }
+
+//        Apply perspective transformation
+        Mat transformed = new Mat();
+        Imgproc.warpPerspective(image, transformed, homographyMat, image.size());
+        log.info("The image perspective was transformed by the offset ({}, {})", dx, dy);
+        return Optional.of(transformed);
     }
 }

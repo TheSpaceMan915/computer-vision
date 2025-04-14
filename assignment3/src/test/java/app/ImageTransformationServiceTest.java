@@ -94,4 +94,15 @@ public class ImageTransformationServiceTest {
         boolean isSaved = imageIOService.writeImage(translated, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
+
+    @Test
+    void testTransformPerspective() {
+        Optional<Mat> optTransformed = imageTransformationService.transformPerspective(original1, 30, 20);
+        boolean isSaved = false;
+        if (optTransformed.isPresent()) {
+            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "transformed_perspective_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
+            isSaved = imageIOService.writeImage(optTransformed.get(), processedImagePath.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
 public class ImageIOService {
 
     /*
-     * Read an image from the specified path.
+     * Read an image from a specified path.
      */
     public Optional<Mat> readImage(String imagePath) {
         Path path = Paths.get(imagePath);
