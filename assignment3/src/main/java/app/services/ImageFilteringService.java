@@ -23,12 +23,13 @@ public class ImageFilteringService {
     }
 
     /*
-     * Apply a Gaussian blur to reduce image noise.
+     * Apply the Gaussian blur to reduce image noise.
      */
     public Mat applyGaussianBlur(Mat image, int width, int height) {
         Mat blurred = new Mat();
         Imgproc.GaussianBlur(image, blurred, new Size(width, height), 0);
-        log.info("A Gaussian blur was applied to the image");
+        log.info("Gaussian kernel size: ({}, {})", width, height);
+        log.info("The Gaussian blur was applied to the image");
         return blurred;
     }
 }
