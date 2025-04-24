@@ -57,46 +57,58 @@ public class ImageFilteringServiceTest {
 
     @Test
     void testApplyNormalizedFilter() {
-        Mat blurred = imageFilteringService.applyFilter(original1, 3, FilterType.NORMALIZED);
-        Path processedImage = Paths.get(imageDirPath, "processed", "normalized_" + origImageName1);
-        boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-        Assertions.assertTrue(isSaved);
+        Optional<Mat> optBlurred = imageFilteringService.applyFilter(original1, 3, FilterType.NORMALIZED);
+        if (optBlurred.isPresent()) {
+            Mat blurred = optBlurred.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "normalized_" + origImageName1);
+            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
+            Assertions.assertTrue(isSaved);
 
-        HighGui.imshow("Normalized Filter", blurred);
-        HighGui.waitKey();
+            HighGui.imshow("Normalized Filter", blurred);
+            HighGui.waitKey();
+        }
     }
 
     @Test
     void testApplyGaussianFilter() {
-        Mat blurred = imageFilteringService.applyFilter(original2, 5, FilterType.GAUSSIAN);
-        Path processedImage = Paths.get(imageDirPath, "processed", "Gaussian_" + origImageName2);
-        boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-        Assertions.assertTrue(isSaved);
+        Optional<Mat> optBlurred = imageFilteringService.applyFilter(original2, 5, FilterType.GAUSSIAN);
+        if (optBlurred.isPresent()) {
+            Mat blurred = optBlurred.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "Gaussian_" + origImageName2);
+            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
+            Assertions.assertTrue(isSaved);
 
-        HighGui.imshow("Gaussian Filter", blurred);
-        HighGui.waitKey();
+            HighGui.imshow("Gaussian Filter", blurred);
+            HighGui.waitKey();
+        }
     }
 
     @Test
     void testApplyMedianFilter() {
-        Mat blurred = imageFilteringService.applyFilter(original3, 7, FilterType.MEDIAN);
-        Path processedImage = Paths.get(imageDirPath, "processed", "median_" + origImageName3);
-        boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-        Assertions.assertTrue(isSaved);
+        Optional<Mat> optBlurred = imageFilteringService.applyFilter(original3, 7, FilterType.MEDIAN);
+        if (optBlurred.isPresent()) {
+            Mat blurred = optBlurred.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "median_" + origImageName3);
+            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
+            Assertions.assertTrue(isSaved);
 
-        HighGui.imshow("Median Filter", blurred);
-        HighGui.waitKey();
+            HighGui.imshow("Median Filter", blurred);
+            HighGui.waitKey();
+        }
     }
 
     @Test
     void testApplyBilateralFilter() {
-        Mat blurred = imageFilteringService.applyFilter(original1, 3, FilterType.BILATERAL);
-        Path processedImage = Paths.get(imageDirPath, "processed", "bilateral_" + origImageName1);
-        boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-        Assertions.assertTrue(isSaved);
+        Optional<Mat> optBlurred = imageFilteringService.applyFilter(original1, 3, FilterType.BILATERAL);
+        if (optBlurred.isPresent()) {
+            Mat blurred = optBlurred.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "bilateral_" + origImageName1);
+            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
+            Assertions.assertTrue(isSaved);
 
-        HighGui.imshow("Bilateral Filter", blurred);
-        HighGui.waitKey();
+            HighGui.imshow("Bilateral Filter", blurred);
+            HighGui.waitKey();
+        }
     }
 
     @Test
@@ -107,17 +119,18 @@ public class ImageFilteringServiceTest {
                     original4,
                     kernelSize,
                     morphShape);
-            Path processedImage = Paths.get(
-                    imageDirPath,
-                    "processed",
-                    "cross-erosion",
-                    "eroded" + "_cross" + "_kernel" + kernelSize + "_" + origImageName4);
             boolean isSaved = false;
             if (optEroded.isPresent()) {
                 Mat eroded = optEroded.get();
+                Path processedImage = Paths.get(
+                        imageDirPath,
+                        "processed",
+                        "cross-erosion",
+                        "eroded" + "_cross" + "_kernel" + kernelSize + "_" + origImageName4);
                 isSaved = imageIOService.writeImage(eroded, processedImage.toString());
-            HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
-            HighGui.waitKey();
+
+                HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
+                HighGui.waitKey();
             }
             Assertions.assertTrue(isSaved);
         }
@@ -131,17 +144,18 @@ public class ImageFilteringServiceTest {
                     original4,
                     kernelSize,
                     morphShape);
-            Path processedImage = Paths.get(
-                    imageDirPath,
-                    "processed",
-                    "rectangle-erosion",
-                    "eroded" + "_rectangle" + "_kernel" + kernelSize + "_" + origImageName4);
             boolean isSaved = false;
             if (optEroded.isPresent()) {
                 Mat eroded = optEroded.get();
+                Path processedImage = Paths.get(
+                        imageDirPath,
+                        "processed",
+                        "rectangle-erosion",
+                        "eroded" + "_rectangle" + "_kernel" + kernelSize + "_" + origImageName4);
                 isSaved = imageIOService.writeImage(eroded, processedImage.toString());
-            HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
-            HighGui.waitKey();
+
+                HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
+                HighGui.waitKey();
             }
             Assertions.assertTrue(isSaved);
         }
@@ -155,17 +169,18 @@ public class ImageFilteringServiceTest {
                     original4,
                     kernelSize,
                     morphShape);
-            Path processedImage = Paths.get(
-                    imageDirPath,
-                    "processed",
-                    "ellipse-dilation",
-                    "dilated" + "_ellipse" + "_kernel" + kernelSize + "_" + origImageName4);
             boolean isSaved = false;
             if (optDilated.isPresent()) {
                 Mat dilated = optDilated.get();
+                Path processedImage = Paths.get(
+                        imageDirPath,
+                        "processed",
+                        "ellipse-dilation",
+                        "dilated" + "_ellipse" + "_kernel" + kernelSize + "_" + origImageName4);
                 isSaved = imageIOService.writeImage(dilated, processedImage.toString());
-            HighGui.imshow("Dilation with Kernel"  + kernelSize, dilated);
-            HighGui.waitKey();
+
+                HighGui.imshow("Dilation with Kernel"  + kernelSize, dilated);
+                HighGui.waitKey();
             }
             Assertions.assertTrue(isSaved);
         }

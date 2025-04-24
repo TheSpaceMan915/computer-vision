@@ -20,7 +20,7 @@ public class ImageFilteringService {
     /*
      * Apply a specified filter to an image.
      */
-    public Mat applyFilter(Mat image, int kernelSize, FilterType filterType) {
+    public Optional<Mat> applyFilter(Mat image, int kernelSize, FilterType filterType) {
         return switch (filterType) {
             case NORMALIZED -> applyNormalizedFilter(image, kernelSize);
             case GAUSSIAN -> applyGaussianFilter(image, kernelSize);
@@ -32,45 +32,65 @@ public class ImageFilteringService {
     /*
      * Apply the normalized filter to an image.
      */
-    private Mat applyNormalizedFilter(Mat image, int kernelSize) {
-        Mat blurred = new Mat();
-        Imgproc.blur(image, blurred, new Size(kernelSize, kernelSize));
-        log.debug("Filter kernel size: '{}'", kernelSize);
-        log.info("The normalized filter was applied to the image");
-        return blurred;
+    private Optional<Mat> applyNormalizedFilter(Mat image, int kernelSize) {
+        try {
+            Mat blurred = new Mat();
+            Imgproc.blur(image, blurred, new Size(kernelSize, kernelSize));
+            log.debug("Filter kernel size: '{}'", kernelSize);
+            log.info("The normalized filter was applied to the image");
+            return Optional.of(blurred);
+        } catch (Exception e) {
+            log.error("Failed to apply normalized filter to the image", e);
+            return Optional.empty();
+        }
     }
 
     /*
      * Apply the Gaussian filter to an image.
      */
-    private Mat applyGaussianFilter(Mat image, int kernelSize) {
-        Mat blurred = new Mat();
-        Imgproc.GaussianBlur(image, blurred, new Size(kernelSize, kernelSize), 0);
-        log.debug("Filter kernel size: '{}'", kernelSize);
-        log.info("The Gaussian filter was applied to the image");
-        return blurred;
+    private Optional<Mat> applyGaussianFilter(Mat image, int kernelSize) {
+        try {
+            Mat blurred = new Mat();
+            Imgproc.GaussianBlur(image, blurred, new Size(kernelSize, kernelSize), 0);
+            log.debug("Filter kernel size: '{}'", kernelSize);
+            log.info("The Gaussian filter was applied to the image");
+            return Optional.of(blurred);
+        } catch (Exception e) {
+            log.error("Failed to apply Gaussian filter to the image", e);
+            return Optional.empty();
+        }
     }
 
     /*
      * Apply the median filter to an image.
      */
-    private Mat applyMedianFilter(Mat image, int kernelSize) {
-        Mat blurred = new Mat();
-        Imgproc.medianBlur(image, blurred, kernelSize);
-        log.debug("Filter kernel size: '{}'", kernelSize);
-        log.info("The median filter was applied to the image");
-        return blurred;
+    private Optional<Mat> applyMedianFilter(Mat image, int kernelSize) {
+        try {
+            Mat blurred = new Mat();
+            Imgproc.medianBlur(image, blurred, kernelSize);
+            log.debug("Filter kernel size: '{}'", kernelSize);
+            log.info("The median filter was applied to the image");
+            return Optional.of(blurred);
+        } catch (Exception e) {
+            log.error("Failed to apply median filter to the image", e);
+            return Optional.empty();
+        }
     }
 
     /*
      * Apply the bilateral filter to an image.
      */
-    private Mat applyBilateralFilter(Mat image, int kernelSize) {
-        Mat blurred = new Mat();
-        Imgproc.bilateralFilter(image, blurred, kernelSize, 25, 25);
-        log.debug("Filter kernel size: '{}'", kernelSize);
-        log.info("The bilateral filter was applied to the image");
-        return blurred;
+    private Optional<Mat> applyBilateralFilter(Mat image, int kernelSize) {
+        try {
+            Mat blurred = new Mat();
+            Imgproc.bilateralFilter(image, blurred, kernelSize, 25, 25);
+            log.debug("Filter kernel size: '{}'", kernelSize);
+            log.info("The bilateral filter was applied to the image");
+            return Optional.of(blurred);
+        } catch (Exception e) {
+            log.error("Failed to apply bilateral filter to the image", e);
+            return Optional.empty();
+        }
     }
 
     /*
