@@ -12,6 +12,7 @@ import org.opencv.highgui.HighGui;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 public class ImageFilteringServiceTest {
 
@@ -31,21 +32,27 @@ public class ImageFilteringServiceTest {
 
     private final String origImageName3 = config.getProperty(Constants.THIRD_IMAGE_NAME);
 
+    private final String origImageName4 = config.getProperty(Constants.FOURTH_IMAGE_NAME);
+
     private Mat original1;
 
     private Mat original2;
 
     private Mat original3;
 
+    private Mat original4;
+
     @BeforeEach
     void readImages() {
         Path origImage1 = Paths.get(imageDirPath, "original", origImageName1);
         Path origImage2 = Paths.get(imageDirPath, "original", origImageName2);
         Path origImage3 = Paths.get(imageDirPath, "original", origImageName3);
+        Path origImage4 = Paths.get(imageDirPath, "original", origImageName4);
 
         original1 = imageIOService.readImage(origImage1.toString()).orElseThrow();
         original2 = imageIOService.readImage(origImage2.toString()).orElseThrow();
         original3 = imageIOService.readImage(origImage3.toString()).orElseThrow();
+        original4 = imageIOService.readImage(origImage4.toString()).orElseThrow();
     }
 
     @Test
@@ -92,4 +99,75 @@ public class ImageFilteringServiceTest {
         HighGui.waitKey();
     }
 
+    @Test
+    void testApplyErosionWithCross() {
+        for (int kernelSize = 3; kernelSize < 16; kernelSize += 2) {
+            MorphShape morphShape = MorphShape.CROSS;
+            Optional<Mat> optEroded = imageFilteringService.applyErosion(
+                    original4,
+                    kernelSize,
+                    morphShape);
+            Path processedImage = Paths.get(
+                    imageDirPath,
+                    "processed",
+                    "cross-erosion",
+                    "eroded" + "_cross" + "_kernel" + kernelSize + "_" + origImageName4);
+            boolean isSaved = false;
+            if (optEroded.isPresent()) {
+                Mat eroded = optEroded.get();
+                isSaved = imageIOService.writeImage(eroded, processedImage.toString());
+            HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
+            HighGui.waitKey();
+            }
+            Assertions.assertTrue(isSaved);
+        }
+    }
+
+    @Test
+    void testApplyErosionWithRectangle() {
+        for (int kernelSize = 3; kernelSize < 16; kernelSize += 2) {
+            MorphShape morphShape = MorphShape.RECTANGLE;
+            Optional<Mat> optEroded = imageFilteringService.applyErosion(
+                    original4,
+                    kernelSize,
+                    morphShape);
+            Path processedImage = Paths.get(
+                    imageDirPath,
+                    "processed",
+                    "rectangle-erosion",
+                    "eroded" + "_rectangle" + "_kernel" + kernelSize + "_" + origImageName4);
+            boolean isSaved = false;
+            if (optEroded.isPresent()) {
+                Mat eroded = optEroded.get();
+                isSaved = imageIOService.writeImage(eroded, processedImage.toString());
+            HighGui.imshow("Erosion with Kernel"  + kernelSize, eroded);
+            HighGui.waitKey();
+            }
+            Assertions.assertTrue(isSaved);
+        }
+    }
+
+    @Test
+    void testApplyDilationWithEllipse() {
+        for (int kernelSize = 3; kernelSize < 16; kernelSize += 2) {
+            MorphShape morphShape = MorphShape.ELLIPSE;
+            Optional<Mat> optDilated = imageFilteringService.applyDilation(
+                    original4,
+                    kernelSize,
+                    morphShape);
+            Path processedImage = Paths.get(
+                    imageDirPath,
+                    "processed",
+                    "ellipse-dilation",
+                    "dilated" + "_ellipse" + "_kernel" + kernelSize + "_" + origImageName4);
+            boolean isSaved = false;
+            if (optDilated.isPresent()) {
+                Mat dilated = optDilated.get();
+                isSaved = imageIOService.writeImage(dilated, processedImage.toString());
+            HighGui.imshow("Dilation with Kernel"  + kernelSize, dilated);
+            HighGui.waitKey();
+            }
+            Assertions.assertTrue(isSaved);
+        }
+    }
 }
