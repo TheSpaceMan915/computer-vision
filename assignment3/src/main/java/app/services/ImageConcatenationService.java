@@ -24,7 +24,7 @@ public class ImageConcatenationService {
             log.warn("You should have at least 2 images for concatenation");
             return false;
         }
-        log.info("The list has enough images for concatenation");
+        log.debug("The list has enough images for concatenation");
         return true;
     }
 
@@ -41,7 +41,7 @@ public class ImageConcatenationService {
                 return false;
             }
         }
-        log.info("The images have the same {}", dimensionName);
+        log.debug("The images have the same {}", dimensionName);
         return true;
     }
 
@@ -55,10 +55,15 @@ public class ImageConcatenationService {
         if (!haveSameDimension(images, true)) {
             return Optional.empty();
         }
-        Mat concatenated = new Mat();
-        Core.hconcat(images, concatenated);
-        log.info("Horizontal concatenation was applied to the images");
-        return Optional.of(concatenated);
+        try {
+            Mat concatenated = new Mat();
+            Core.hconcat(images, concatenated);
+            log.info("Horizontal concatenation was applied to the images");
+            return Optional.of(concatenated);
+        } catch (Exception e) {
+            log.error("Failed to apply horizontal concatenation to the given images", e);
+            return Optional.empty();
+        }
     }
 
     /*
@@ -71,9 +76,14 @@ public class ImageConcatenationService {
         if (!haveSameDimension(images, false)) {
             return Optional.empty();
         }
-        Mat concatenated = new Mat();
-        Core.vconcat(images, concatenated);
-        log.info("Vertical concatenation was applied to the images");
-        return Optional.of(concatenated);
+        try {
+            Mat concatenated = new Mat();
+            Core.vconcat(images, concatenated);
+            log.info("Vertical concatenation was applied to the images");
+            return Optional.of(concatenated);
+        } catch (Exception e) {
+            log.error("Failed to apply vertical concatenation to the given images", e);
+            return Optional.empty();
+        }
     }
 }

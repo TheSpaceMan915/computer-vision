@@ -18,8 +18,8 @@ public class OpenCVLoader {
         try {
             OpenCV.loadLocally();
             log.info("OpenCV was successfully loaded");
-            log.info("OpenCV version '{}'", Core.getVersionString());
-            log.info("OS '{}'", System.getProperty("os.name") );
+            log.debug("OpenCV version '{}'", Core.getVersionString());
+            log.debug("OS '{}'", System.getProperty("os.name") );
         } catch (Exception e) {
             log.error("Failed to load OpenCV", e);
         }

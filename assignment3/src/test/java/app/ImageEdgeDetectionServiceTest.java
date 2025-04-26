@@ -27,6 +27,14 @@ public class ImageEdgeDetectionServiceTest {
 
     private final ImageEdgeDetectionService imageEdgeDetectionService = new ImageEdgeDetectionService();
 
+    private final String imageDirPath = config.getProperty(Constants.IMAGE_DIR_PATH);
+
+    private final String origImageName1 = config.getProperty(Constants.FIRST_IMAGE_NAME);
+
+    private final String origImageName2 = config.getProperty(Constants.SECOND_IMAGE_NAME);
+
+    private final String origImageName3 = config.getProperty(Constants.THIRD_IMAGE_NAME);
+
     private Mat original1;
 
     private Mat original2;
@@ -35,44 +43,37 @@ public class ImageEdgeDetectionServiceTest {
 
     @BeforeEach
     void readImages() {
-        Path origImagePath1 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Path origImagePath2 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
-        Path origImagePath3 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
+        Path origImage1 = Paths.get(imageDirPath, "original", origImageName1);
+        Path origImage2 = Paths.get(imageDirPath, "original", origImageName2);
+        Path origImage3 = Paths.get(imageDirPath, "original", origImageName3);
 
-        Optional<Mat> optOriginal1 = imageIOService.readImage(origImagePath1.toString());
-        Optional<Mat> optOriginal2 = imageIOService.readImage(origImagePath2.toString());
-        Optional<Mat> optOriginal3 = imageIOService.readImage(origImagePath3.toString());
-        Assertions.assertTrue(optOriginal1.isPresent());
-        Assertions.assertTrue(optOriginal2.isPresent());
-        Assertions.assertTrue(optOriginal3.isPresent());
-
-        original1 = optOriginal1.get();
-        original2 = optOriginal2.get();
-        original3 = optOriginal3.get();
+        original1 = imageIOService.readImage(origImage1.toString()).orElseThrow();
+        original2 = imageIOService.readImage(origImage2.toString()).orElseThrow();
+        original3 = imageIOService.readImage(origImage3.toString()).orElseThrow();
     }
 
     @Test
     void testApplySobelOperator() {
-        Mat blurred = imageFilteringService.applyGaussianBlur(original3, 3, 3);
-        Mat grayscale = imageFilteringService.convertToGrayscale(blurred);
-        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 3);
-//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 1);
-//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_8U, 3);
+        Mat blurred = imageFilteringService.applyGaussianBlur(original3, 3, 3).orElseThrow();
+        Mat grayscale = imageFilteringService.convertToGrayscale(blurred).orElseThrow();
+        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 3).orElseThrow();
+//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 1).orElseThrow();
+//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_8U, 3).orElseThrow();
 
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "Sobel_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
+        Path processedImagePath = Paths.get(imageDirPath, "processed", "Sobel_" + origImageName3);
         boolean isSaved = imageIOService.writeImage(edges, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyLaplacianOperator() {
-        Mat blurred = imageFilteringService.applyGaussianBlur(original1, 3, 3);
-        Mat grayscale = imageFilteringService.convertToGrayscale(blurred);
-        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 3);
-//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 1);
-//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_8U, 3);
+        Mat blurred = imageFilteringService.applyGaussianBlur(original1, 3, 3).orElseThrow();
+        Mat grayscale = imageFilteringService.convertToGrayscale(blurred).orElseThrow();
+        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 3).orElseThrow();
+//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 1).orElseThrow();
+//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_8U, 3).orElseThrow();
 
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "Laplacian_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
+        Path processedImagePath = Paths.get(imageDirPath, "processed", "Laplacian_" + origImageName1);
         boolean isSaved = imageIOService.writeImage(edgeImage, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }

@@ -21,7 +21,7 @@ public class ImageIOService {
      */
     public Optional<Mat> readImage(String imagePath) {
         Path path = Paths.get(imagePath);
-        log.info("Loading the image from '{}'", path);
+        log.debug("Loading the image from '{}'", path);
         if (!Files.exists(path)) {
             log.warn("Could not find the image at '{}'", path);
             return Optional.empty();
@@ -35,7 +35,7 @@ public class ImageIOService {
      * Save an image to a specified path.
      */
     public boolean writeImage(Mat image, String imagePath) {
-        log.info("Saving the image to '{}'", imagePath);
+        log.debug("Saving the image to '{}'", imagePath);
         boolean isSaved = Imgcodecs.imwrite(imagePath, image);
         if (!isSaved) {
             log.warn("Could not save the image at '{}'", imagePath);

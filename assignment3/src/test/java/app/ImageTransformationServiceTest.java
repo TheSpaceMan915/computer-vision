@@ -23,6 +23,14 @@ public class ImageTransformationServiceTest {
 
     private final ImageTransformationService imageTransformationService = new ImageTransformationService();
 
+    private final String imageDirPath = config.getProperty(Constants.IMAGE_DIR_PATH);
+
+    private final String origImageName1 = config.getProperty(Constants.FIRST_IMAGE_NAME);
+
+    private final String origImageName2 = config.getProperty(Constants.SECOND_IMAGE_NAME);
+
+    private final String origImageName3 = config.getProperty(Constants.THIRD_IMAGE_NAME);
+
     private Mat original1;
 
     private Mat original2;
@@ -31,67 +39,78 @@ public class ImageTransformationServiceTest {
 
     @BeforeEach
     void readImages() {
-        Path origImagePath1 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Path origImagePath2 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
-        Path origImagePath3 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
+        Path origImage1 = Paths.get(imageDirPath, "original", origImageName1);
+        Path origImage2 = Paths.get(imageDirPath, "original", origImageName2);
+        Path origImage3 = Paths.get(imageDirPath, "original", origImageName3);
 
-        Optional<Mat> optOriginal1 = imageIOService.readImage(origImagePath1.toString());
-        Optional<Mat> optOriginal2 = imageIOService.readImage(origImagePath2.toString());
-        Optional<Mat> optOriginal3 = imageIOService.readImage(origImagePath3.toString());
-        Assertions.assertTrue(optOriginal1.isPresent());
-        Assertions.assertTrue(optOriginal2.isPresent());
-        Assertions.assertTrue(optOriginal3.isPresent());
-
-        original1 = optOriginal1.get();
-        original2 = optOriginal2.get();
-        original3 = optOriginal3.get();
+        original1 = imageIOService.readImage(origImage1.toString()).orElseThrow();
+        original2 = imageIOService.readImage(origImage2.toString()).orElseThrow();
+        original3 = imageIOService.readImage(origImage3.toString()).orElseThrow();
     }
 
     @Test
     void testFlip() {
-        Mat flipped = imageTransformationService.flip(original2, Axis.X);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "flipped_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(flipped, processedImagePath.toString());
+        Optional<Mat> optFlipped = imageTransformationService.flip(original2, Axis.X);
+        boolean isSaved = false;
+        if (optFlipped.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "flipped_" + origImageName2);
+            isSaved = imageIOService.writeImage(optFlipped.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testRepeat() {
-        Mat repeated = imageTransformationService.repeat(original3, 2, 2);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "repeated_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(repeated, processedImagePath.toString());
+        Optional<Mat> optRepeated = imageTransformationService.repeat(original3, 2, 2);
+        boolean isSaved = false;
+        if (optRepeated.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "repeated_" + origImageName3);
+            isSaved = imageIOService.writeImage(optRepeated.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testResize() {
-        Mat resized = imageTransformationService.resize(original1, 200, 100);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "resized_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(resized, processedImagePath.toString());
+        Optional<Mat> optResized = imageTransformationService.resize(original1, 200, 100);
+        boolean isSaved = false;
+        if (optResized.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "resized_" + origImageName1);
+            isSaved = imageIOService.writeImage(optResized.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
-    void testRotateWithCropFalse() {
-        Mat rotated = imageTransformationService.rotate(original2, 90, false);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "rotated_with_crop_false_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(rotated, processedImagePath.toString());
+    void testRotateWithoutCrop() {
+        Optional<Mat> optRotated = imageTransformationService.rotate(original2, 90, false);
+        boolean isSaved = false;
+        if (optRotated.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "rotated_without_crop_" + origImageName2);
+            isSaved = imageIOService.writeImage(optRotated.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
-    void testRotateWithCropTrue() {
-        Mat rotated = imageTransformationService.rotate(original2, 90, true);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "rotated_with_crop_true_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(rotated, processedImagePath.toString());
+    void testRotateWithCrop() {
+        Optional<Mat> optRotated = imageTransformationService.rotate(original2, 90, true);
+        boolean isSaved = false;
+        if (optRotated.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "rotated_with_crop_" + origImageName2);
+            isSaved = imageIOService.writeImage(optRotated.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testTranslate() {
-        Mat translated = imageTransformationService.translate(original3, 20, 20);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "translated_" + config.getProperty(Constants.THIRD_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(translated, processedImagePath.toString());
+        Optional<Mat> optTranslated = imageTransformationService.translate(original3, 20, 20);
+        boolean isSaved = false;
+        if (optTranslated.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "translated_" + origImageName3);
+            isSaved = imageIOService.writeImage(optTranslated.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
@@ -100,7 +119,7 @@ public class ImageTransformationServiceTest {
         Optional<Mat> optTransformed = imageTransformationService.transformPerspective(original1, 30, 20);
         boolean isSaved = false;
         if (optTransformed.isPresent()) {
-            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "transformed_perspective_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "transformed_perspective_" + origImageName1);
             isSaved = imageIOService.writeImage(optTransformed.get(), processedImagePath.toString());
         }
         Assertions.assertTrue(isSaved);

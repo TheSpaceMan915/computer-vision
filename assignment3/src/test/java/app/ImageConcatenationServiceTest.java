@@ -25,6 +25,14 @@ public class ImageConcatenationServiceTest {
 
     private final ImageConcatenationService imageConcatenationService = new ImageConcatenationService();
 
+    private final String imageDirPath = config.getProperty(Constants.IMAGE_DIR_PATH);
+
+    private final String origImageName1 = config.getProperty(Constants.FIRST_IMAGE_NAME);
+
+    private final String origImageName2 = config.getProperty(Constants.SECOND_IMAGE_NAME);
+
+    private final String origImageName3 = config.getProperty(Constants.THIRD_IMAGE_NAME);
+
     private Mat original1;
 
     private Mat original2;
@@ -33,20 +41,13 @@ public class ImageConcatenationServiceTest {
 
     @BeforeEach
     void readImages() {
-        Path origImagePath1 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Path origImagePath2 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
-        Path origImagePath3 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
+        Path origImage1 = Paths.get(imageDirPath, "original", origImageName1);
+        Path origImage2 = Paths.get(imageDirPath, "original", origImageName2);
+        Path origImage3 = Paths.get(imageDirPath, "original", origImageName3);
 
-        Optional<Mat> optOriginal1 = imageIOService.readImage(origImagePath1.toString());
-        Optional<Mat> optOriginal2 = imageIOService.readImage(origImagePath2.toString());
-        Optional<Mat> optOriginal3 = imageIOService.readImage(origImagePath3.toString());
-        Assertions.assertTrue(optOriginal1.isPresent());
-        Assertions.assertTrue(optOriginal2.isPresent());
-        Assertions.assertTrue(optOriginal3.isPresent());
-
-        original1 = optOriginal1.get();
-        original2 = optOriginal2.get();
-        original3 = optOriginal3.get();
+        original1 = imageIOService.readImage(origImage1.toString()).orElseThrow();
+        original2 = imageIOService.readImage(origImage2.toString()).orElseThrow();
+        original3 = imageIOService.readImage(origImage3.toString()).orElseThrow();
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ImageConcatenationServiceTest {
         Optional<Mat> optConcatenated = imageConcatenationService.hconcat(images);
         boolean isSaved = false;
         if (optConcatenated.isPresent()) {
-            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "hconcatenated.jpg");
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "hconcatenated.jpg");
             isSaved = imageIOService.writeImage(optConcatenated.get(), processedImagePath.toString());
         }
         Assertions.assertTrue(isSaved);
@@ -67,7 +68,7 @@ public class ImageConcatenationServiceTest {
         Optional<Mat> optConcatenated = imageConcatenationService.vconcat(images);
         boolean isSaved = false;
         if (optConcatenated.isPresent()) {
-            Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "vconcatenated.jpg");
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "vconcatenated.jpg");
             isSaved = imageIOService.writeImage(optConcatenated.get(), processedImagePath.toString());
         }
         Assertions.assertTrue(isSaved);

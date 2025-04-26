@@ -23,6 +23,14 @@ public class ImageFilteringServiceTest {
 
     private final ImageFilteringService imageFilteringService = new ImageFilteringService();
 
+    private final String imageDirPath = config.getProperty(Constants.IMAGE_DIR_PATH);
+
+    private final String origImageName1 = config.getProperty(Constants.FIRST_IMAGE_NAME);
+
+    private final String origImageName2 = config.getProperty(Constants.SECOND_IMAGE_NAME);
+
+    private final String origImageName3 = config.getProperty(Constants.THIRD_IMAGE_NAME);
+
     private Mat original1;
 
     private Mat original2;
@@ -31,35 +39,34 @@ public class ImageFilteringServiceTest {
 
     @BeforeEach
     void readImages() {
-        Path origImagePath1 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.FIRST_IMAGE_NAME));
-        Path origImagePath2 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.SECOND_IMAGE_NAME));
-        Path origImagePath3 = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "original", config.getProperty(Constants.THIRD_IMAGE_NAME));
+        Path origImage1 = Paths.get(imageDirPath, "original", origImageName1);
+        Path origImage2 = Paths.get(imageDirPath, "original", origImageName2);
+        Path origImage3 = Paths.get(imageDirPath, "original", origImageName3);
 
-        Optional<Mat> optOriginal1 = imageIOService.readImage(origImagePath1.toString());
-        Optional<Mat> optOriginal2 = imageIOService.readImage(origImagePath2.toString());
-        Optional<Mat> optOriginal3 = imageIOService.readImage(origImagePath3.toString());
-        Assertions.assertTrue(optOriginal1.isPresent());
-        Assertions.assertTrue(optOriginal2.isPresent());
-        Assertions.assertTrue(optOriginal3.isPresent());
-
-        original1 = optOriginal1.get();
-        original2 = optOriginal2.get();
-        original3 = optOriginal3.get();
+        original1 = imageIOService.readImage(origImage1.toString()).orElseThrow();
+        original2 = imageIOService.readImage(origImage2.toString()).orElseThrow();
+        original3 = imageIOService.readImage(origImage3.toString()).orElseThrow();
     }
 
     @Test
     void testConvertToGrayscale() {
-        Mat grayscale = imageFilteringService.convertToGrayscale(original1);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "grayscale_" + config.getProperty(Constants.FIRST_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(grayscale, processedImagePath.toString());
+        Optional<Mat> optGrayscale = imageFilteringService.convertToGrayscale(original1);
+        boolean isSaved = false;
+        if (optGrayscale.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "grayscale_" + origImageName1);
+            isSaved = imageIOService.writeImage(optGrayscale.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyGaussianBlur() {
-        Mat blurred = imageFilteringService.applyGaussianBlur(original2, 3, 3);
-        Path processedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), "processed", "blurred_" + config.getProperty(Constants.SECOND_IMAGE_NAME));
-        boolean isSaved = imageIOService.writeImage(blurred, processedImagePath.toString());
+        Optional<Mat> optBlurred = imageFilteringService.applyGaussianBlur(original2, 3, 3);
+        boolean isSaved = false;
+        if (optBlurred.isPresent()) {
+            Path processedImagePath = Paths.get(imageDirPath, "processed", "blurred_" + origImageName2);
+            isSaved = imageIOService.writeImage(optBlurred.get(), processedImagePath.toString());
+        }
         Assertions.assertTrue(isSaved);
     }
 }

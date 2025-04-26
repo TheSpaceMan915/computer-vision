@@ -58,57 +58,61 @@ public class ImageFilteringServiceTest {
     @Test
     void testApplyNormalizedFilter() {
         Optional<Mat> optBlurred = imageFilteringService.applyFilter(original1, 3, FilterType.NORMALIZED);
+        boolean isSaved = false;
         if (optBlurred.isPresent()) {
             Mat blurred = optBlurred.get();
             Path processedImage = Paths.get(imageDirPath, "processed", "normalized_" + origImageName1);
-            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-            Assertions.assertTrue(isSaved);
+            isSaved = imageIOService.writeImage(blurred, processedImage.toString());
 
             HighGui.imshow("Normalized Filter", blurred);
             HighGui.waitKey();
         }
+        Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyGaussianFilter() {
         Optional<Mat> optBlurred = imageFilteringService.applyFilter(original2, 5, FilterType.GAUSSIAN);
+        boolean isSaved = false;
         if (optBlurred.isPresent()) {
             Mat blurred = optBlurred.get();
             Path processedImage = Paths.get(imageDirPath, "processed", "Gaussian_" + origImageName2);
-            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-            Assertions.assertTrue(isSaved);
+            isSaved = imageIOService.writeImage(blurred, processedImage.toString());
 
             HighGui.imshow("Gaussian Filter", blurred);
             HighGui.waitKey();
         }
+        Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyMedianFilter() {
         Optional<Mat> optBlurred = imageFilteringService.applyFilter(original3, 7, FilterType.MEDIAN);
+        boolean isSaved = false;
         if (optBlurred.isPresent()) {
             Mat blurred = optBlurred.get();
             Path processedImage = Paths.get(imageDirPath, "processed", "median_" + origImageName3);
-            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-            Assertions.assertTrue(isSaved);
+            isSaved = imageIOService.writeImage(blurred, processedImage.toString());
 
             HighGui.imshow("Median Filter", blurred);
             HighGui.waitKey();
         }
+        Assertions.assertTrue(isSaved);
     }
 
     @Test
     void testApplyBilateralFilter() {
         Optional<Mat> optBlurred = imageFilteringService.applyFilter(original1, 3, FilterType.BILATERAL);
+        boolean isSaved = false;
         if (optBlurred.isPresent()) {
             Mat blurred = optBlurred.get();
             Path processedImage = Paths.get(imageDirPath, "processed", "bilateral_" + origImageName1);
-            boolean isSaved = imageIOService.writeImage(blurred, processedImage.toString());
-            Assertions.assertTrue(isSaved);
+            isSaved = imageIOService.writeImage(blurred, processedImage.toString());
 
             HighGui.imshow("Bilateral Filter", blurred);
             HighGui.waitKey();
         }
+        Assertions.assertTrue(isSaved);
     }
 
     @Test
