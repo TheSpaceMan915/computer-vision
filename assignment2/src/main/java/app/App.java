@@ -54,7 +54,7 @@ public class App extends Application {
 //        Run the image processing
         startButton.setOnAction(event -> {
             Mat image = imageService.readImage(origImagePath.toString());
-            Mat nullifiedImage = imageService.nullifyChannel(image, Channel.RED);
+            Mat nullifiedImage = imageService.nullifyChannel(image, Channel.RED).orElseThrow();
             Path nullifiedImagePath = Paths.get(config.getProperty(Constants.IMAGE_DIR_PATH), config.getProperty(Constants.PROCESSED_IMAGE_NAME));
             boolean isSaved = imageService.writeImage(nullifiedImage, nullifiedImagePath.toString());
             if (isSaved) {
@@ -81,7 +81,7 @@ public class App extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(imageContainer);
         root.setBottom(buttonContainer);
-        Scene scene = new Scene(root, 600, 430);
+        Scene scene = new Scene(root, 600, 330);
         primaryStage.setScene(scene);
         primaryStage.setTitle("JavaFX App");
         primaryStage.show();
