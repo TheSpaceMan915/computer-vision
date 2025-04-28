@@ -11,6 +11,7 @@
         <module name="assignment1" />
         <module name="assignment4" />
         <module name="assignment3" />
+        <module name="assignment5" />
       </profile>
     </annotationProcessing>
   </component>
