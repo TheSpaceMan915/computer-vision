@@ -1,9 +1,7 @@
 package app.services;
 
 import app.Axis;
-
 import lombok.extern.log4j.Log4j2;
-
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 

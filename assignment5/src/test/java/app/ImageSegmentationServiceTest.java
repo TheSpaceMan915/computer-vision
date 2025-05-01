@@ -74,4 +74,55 @@ public class ImageSegmentationServiceTest {
         }
         Assertions.assertTrue(isSaved);
     }
+    
+    @Test
+    void testBuildDownscalingPyramid() {
+        Optional<Mat> optDownscaled = imageSegmentationService.buildDownscalingPyramid(original3, 2);
+        boolean isSaved = false;
+        if (optDownscaled.isPresent()) {
+            Mat downscaled = optDownscaled.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "downscaled_" + origImageName3);
+            isSaved = imageIOService.writeImage(downscaled, processedImage.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testBuildUpscalingPyramid() {
+        Optional<Mat> optUpscaled = imageSegmentationService.buildUpscalingPyramid(original3, 2);
+        boolean isSaved = false;
+        if (optUpscaled.isPresent()) {
+            Mat upscaled = optUpscaled.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "upscaled_" + origImageName3);
+            isSaved = imageIOService.writeImage(upscaled, processedImage.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testReconstructFromPyramid() {
+        Optional<Mat> optReconstructed = imageSegmentationService.reconstructFromPyramid(original3, 2);
+        boolean isSaved = false;
+        if (optReconstructed.isPresent()) {
+            Mat reconstructed = optReconstructed.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "reconstructed_" + origImageName3);
+            isSaved = imageIOService.writeImage(reconstructed, processedImage.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testComputeDifference() {
+        Mat reconstructed = imageSegmentationService
+                .reconstructFromPyramid(original3, 2)
+                .orElseThrow();
+        Optional<Mat> optDifference = imageSegmentationService.computeDifference(original3, reconstructed);
+        boolean isSaved = false;
+        if (optDifference.isPresent()) {
+            Mat difference = optDifference.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "difference_" + origImageName3);
+            isSaved = imageIOService.writeImage(difference, processedImage.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
 }

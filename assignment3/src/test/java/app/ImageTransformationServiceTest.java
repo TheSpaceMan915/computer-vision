@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,7 +73,7 @@ public class ImageTransformationServiceTest {
 
     @Test
     void testResize() {
-        Optional<Mat> optResized = imageTransformationService.resize(original1, 200, 100);
+        Optional<Mat> optResized = imageTransformationService.resize(original1, new Size(200, 100));
         boolean isSaved = false;
         if (optResized.isPresent()) {
             Path processedImagePath = Paths.get(imageDirPath, "processed", "resized_" + origImageName1);
