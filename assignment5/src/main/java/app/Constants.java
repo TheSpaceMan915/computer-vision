@@ -12,4 +12,6 @@ public class Constants {
     public static final String SECOND_IMAGE_NAME = "second.image.name";
 
     public static final String THIRD_IMAGE_NAME = "third.image.name";
+
+    public static final String FOURTH_IMAGE_NAME = "fourth.image.name";
 }

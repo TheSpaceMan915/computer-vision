@@ -112,16 +112,16 @@ public class ImageSegmentationServiceTest {
     }
 
     @Test
-    void testComputeDifference() {
+    void testSubtract() {
         Mat reconstructed = imageSegmentationService
                 .reconstructFromPyramid(original3, 2)
                 .orElseThrow();
-        Optional<Mat> optDifference = imageSegmentationService.computeDifference(original3, reconstructed);
+        Optional<Mat> optSubtracted = imageSegmentationService.subtract(original3, reconstructed);
         boolean isSaved = false;
-        if (optDifference.isPresent()) {
-            Mat difference = optDifference.get();
-            Path processedImage = Paths.get(imageDirPath, "processed", "difference_" + origImageName3);
-            isSaved = imageIOService.writeImage(difference, processedImage.toString());
+        if (optSubtracted.isPresent()) {
+            Mat subtracted = optSubtracted.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "subtracted_" + origImageName3);
+            isSaved = imageIOService.writeImage(subtracted, processedImage.toString());
         }
         Assertions.assertTrue(isSaved);
     }

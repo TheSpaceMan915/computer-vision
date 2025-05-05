@@ -108,8 +108,12 @@ public class ImageSegmentationService {
     public Optional<Mat> reconstructFromPyramid(Mat image, int levelNumber) {
         try {
 //            Reconstruct the original image
-            Mat downscaled = buildDownscalingPyramid(image, levelNumber).orElseThrow();
-            Mat upscaled = buildUpscalingPyramid(downscaled, levelNumber).orElseThrow();
+            Optional<Mat> optDownscaled = buildDownscalingPyramid(image, levelNumber);
+            if (optDownscaled.isEmpty()) return Optional.empty();
+
+            Optional<Mat> optUpscaled = buildUpscalingPyramid(optDownscaled.get(), levelNumber);
+            if (optUpscaled.isEmpty()) return Optional.empty();
+            Mat upscaled = optUpscaled.get();
 
 //                Get the image sizes
             Size originalImageSize = image.size();
@@ -131,16 +135,16 @@ public class ImageSegmentationService {
     }
 
     /*
-     * Compute the difference between an original and a reconstructed image.
+     * Compute the difference between two images.
      */
-    public Optional<Mat> computeDifference(Mat original, Mat reconstructed) {
+    public Optional<Mat> subtract(Mat image1, Mat image2) {
         try {
             Mat difference = new Mat();
-            Core.subtract(original, reconstructed, difference);
-            log.info("The difference between the original and the reconstructed image was computed");
+            Core.subtract(image1, image2, difference);
+            log.info("The difference between the two images was computed");
             return Optional.of(difference);
         } catch (Exception e) {
-            log.error("Failed to compute the difference between the original and the reconstructed image", e);
+            log.error("Failed to compute the difference between the two images", e);
             return Optional.empty();
         }
     }
