@@ -1,7 +1,7 @@
 package app.services;
 
-import app.ThresholdResult;
 import app.ThresholdType;
+import app.ThresholdResult;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -153,8 +153,8 @@ public class ImageSegmentationService {
     }
 
     /*
-     * Apply threshold to an image.
-     */
+    * Apply threshold to an image.
+    */
     public Optional<ThresholdResult> applyThreshold(
             Mat image,
             double threshold,

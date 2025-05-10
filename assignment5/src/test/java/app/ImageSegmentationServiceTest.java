@@ -1,5 +1,6 @@
 package app;
 
+import app.services.ImageFilteringService;
 import app.services.ImageIOService;
 import app.services.ImageSegmentationService;
 
@@ -22,6 +23,8 @@ public class ImageSegmentationServiceTest {
     private final Config config = new Config();
 
     private final ImageIOService imageIOService = new ImageIOService();
+
+    private final ImageFilteringService imageFilteringService = new ImageFilteringService();
 
     private final ImageSegmentationService imageSegmentationService = new ImageSegmentationService();
 
@@ -122,6 +125,27 @@ public class ImageSegmentationServiceTest {
             Mat subtracted = optSubtracted.get();
             Path processedImage = Paths.get(imageDirPath, "processed", "subtracted_" + origImageName3);
             isSaved = imageIOService.writeImage(subtracted, processedImage.toString());
+        }
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testApplyThreshold() {
+        Mat grayscale = imageFilteringService
+                .convertToGrayscale(original2)
+                .orElseThrow();
+        Optional<ThresholdResult> optThresholdResult
+                = imageSegmentationService.applyThreshold(
+                        grayscale,
+                50,
+                255,
+                ThresholdType.BINARY,
+                true);
+        boolean isSaved = false;
+        if (optThresholdResult.isPresent()) {
+            ThresholdResult thresholdResult = optThresholdResult.get();
+            Path processedImage = Paths.get(imageDirPath, "processed", "thresholded_" + origImageName2);
+            isSaved = imageIOService.writeImage(thresholdResult.thresholded(), processedImage.toString());
         }
         Assertions.assertTrue(isSaved);
     }
