@@ -13,7 +13,6 @@ import org.opencv.core.Mat;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 public class ImageEdgeDetectionServiceTest {
 
@@ -54,11 +53,21 @@ public class ImageEdgeDetectionServiceTest {
 
     @Test
     void testApplySobelOperator() {
-        Mat blurred = imageFilteringService.applyGaussianBlur(original3, 3, 3).orElseThrow();
-        Mat grayscale = imageFilteringService.convertToGrayscale(blurred).orElseThrow();
-        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 3).orElseThrow();
-//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_16S, 1).orElseThrow();
-//        Mat edges = imageEdgeDetectionService.applySobelOperator(grayscale, CvType.CV_8U, 3).orElseThrow();
+        Mat blurred = imageFilteringService
+                .applyGaussianBlur(original3, 3, 3)
+                .orElseThrow();
+        Mat grayscale = imageFilteringService
+                .convertToGrayscale(blurred)
+                .orElseThrow();
+        Mat edges = imageEdgeDetectionService
+                .applySobelOperator(grayscale, CvType.CV_16S, 3)
+                .orElseThrow();
+//        Mat edges = imageEdgeDetectionService
+//                .applySobelOperator(grayscale, CvType.CV_16S, 1)
+//                .orElseThrow();
+//        Mat edges = imageEdgeDetectionService
+//                .applySobelOperator(grayscale, CvType.CV_8U, 3)
+//                .orElseThrow();
 
         Path processedImagePath = Paths.get(imageDirPath, "processed", "Sobel_" + origImageName3);
         boolean isSaved = imageIOService.writeImage(edges, processedImagePath.toString());
@@ -67,14 +76,35 @@ public class ImageEdgeDetectionServiceTest {
 
     @Test
     void testApplyLaplacianOperator() {
-        Mat blurred = imageFilteringService.applyGaussianBlur(original1, 3, 3).orElseThrow();
-        Mat grayscale = imageFilteringService.convertToGrayscale(blurred).orElseThrow();
-        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 3).orElseThrow();
-//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_16S, 1).orElseThrow();
-//        Mat edgeImage = imageEdgeDetectionService.applyLaplacianOperator(grayscale, CvType.CV_8U, 3).orElseThrow();
+        Mat blurred = imageFilteringService
+                .applyGaussianBlur(original1, 3, 3)
+                .orElseThrow();
+        Mat grayscale = imageFilteringService
+                .convertToGrayscale(blurred)
+                .orElseThrow();
+        Mat edgeImage = imageEdgeDetectionService
+                .applyLaplacianOperator(grayscale, CvType.CV_16S, 3)
+                .orElseThrow();
+//        Mat edgeImage = imageEdgeDetectionService
+//                .applyLaplacianOperator(grayscale, CvType.CV_16S, 1)
+//                .orElseThrow();
+//        Mat edgeImage = imageEdgeDetectionService
+//                .applyLaplacianOperator(grayscale, CvType.CV_8U, 3)
+//                .orElseThrow();
 
         Path processedImagePath = Paths.get(imageDirPath, "processed", "Laplacian_" + origImageName1);
         boolean isSaved = imageIOService.writeImage(edgeImage, processedImagePath.toString());
+        Assertions.assertTrue(isSaved);
+    }
+
+    @Test
+    void testApplyCanny() {
+        final double threshold = 0.25;
+        Mat edges = imageEdgeDetectionService
+                .applyCanny(original2, threshold, threshold * 2)
+                .orElseThrow();
+        Path processedImagePath = Paths.get(imageDirPath, "processed", "Canny_" + origImageName2);
+        boolean isSaved = imageIOService.writeImage(edges, processedImagePath.toString());
         Assertions.assertTrue(isSaved);
     }
 }

@@ -1,7 +1,6 @@
 package app.services;
 
 import app.MorphShape;
-
 import app.ThresholdResult;
 import app.ThresholdType;
 
@@ -27,6 +26,8 @@ public class ObjectDetectionService {
     private final ImageSegmentationService imageSegmentationService = new ImageSegmentationService();
 
     private final ImageTransformationService imageTransformationService = new ImageTransformationService();
+
+    private final ImageEdgeDetectionService imageEdgeDetectionService = new ImageEdgeDetectionService();
 
     /*
     * Count detected rectangles.
@@ -106,8 +107,10 @@ public class ObjectDetectionService {
             imageIOService.writeImage(thresholded, Paths.get(debugDirPath, "7. thresholded.jpg").toString());
 
 //            Apply Canny edge detection
-            Mat edges = new Mat();
-            Imgproc.Canny(thresholded, edges, threshold, threshold * 3);
+            Optional<Mat> optEdges = imageEdgeDetectionService
+                    .applyCanny(thresholded, threshold, threshold * 3);
+            if (optEdges.isEmpty()) return Optional.empty();
+            Mat edges = optEdges.get();
             imageIOService.writeImage(edges, Paths.get(debugDirPath, "8. edges.jpg").toString());
 
 //            Apply dilation

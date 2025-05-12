@@ -1,5 +1,6 @@
 package app.services;
 
+import app.FilterType;
 import app.MorphShape;
 import app.ThresholdResult;
 import app.ThresholdType;
@@ -26,6 +27,8 @@ public class ObjectDetectionService {
     private final ImageSegmentationService imageSegmentationService = new ImageSegmentationService();
 
     private final ImageTransformationService imageTransformationService = new ImageTransformationService();
+
+    private final ImageEdgeDetectionService imageEdgeDetectionService = new ImageEdgeDetectionService();
 
     /*
     * Count detected rectangles.
@@ -105,8 +108,10 @@ public class ObjectDetectionService {
             imageIOService.writeImage(thresholded, Paths.get(debugDirPath, "7. thresholded.jpg").toString());
 
 //            Apply Canny edge detection
-            Mat edges = new Mat();
-            Imgproc.Canny(thresholded, edges, threshold, threshold * 3);
+            Optional<Mat> optEdges = imageEdgeDetectionService
+                    .applyCanny(thresholded, threshold, threshold * 3);
+            if (optEdges.isEmpty()) return Optional.empty();
+            Mat edges = optEdges.get();
             imageIOService.writeImage(edges, Paths.get(debugDirPath, "8. edges.jpg").toString());
 
 //            Apply dilation
@@ -174,5 +179,49 @@ public class ObjectDetectionService {
             log.error("Failed to detect rectangles on the image", e);
             return Optional.empty();
         }
+    }
+
+    /*
+    * Detect objects on an image using Canny algorithm.
+    */
+    public Optional<Mat> detectWithCanny(Mat image, String debugDirPath) {
+
+//            Convert the image to grayscale
+        Optional<Mat> optGrayscale = imageFilteringService.convertToGrayscale(image);
+        if (optGrayscale.isEmpty()) return Optional.empty();
+        Mat grayscale = optGrayscale.get();
+        imageIOService.writeImage(grayscale, Paths.get(debugDirPath, "1. grayscale.jpg").toString());
+
+//        Apply the normalized filter to the image
+        Optional<Mat> optBlurred = imageFilteringService.applyFilter(
+                grayscale,
+                3,
+                FilterType.NORMALIZED);
+        if (optBlurred.isEmpty()) return Optional.empty();
+        Mat blurred = optBlurred.get();
+        imageIOService.writeImage(blurred, Paths.get(debugDirPath, "2. blurred.jpg").toString());
+
+//            Use thresholding to binarize the image
+        Optional<ThresholdResult> optThresholdResult
+                = imageSegmentationService.applyThreshold(
+                blurred,
+                50,
+                255,
+                ThresholdType.BINARY,
+                true);
+        if (optThresholdResult.isEmpty()) return Optional.empty();
+        ThresholdResult thresholdResult = optThresholdResult.get();
+        double threshold = thresholdResult.threshold();
+        Mat thresholded = thresholdResult.thresholded();
+        imageIOService.writeImage(thresholded, Paths.get(debugDirPath, "3. thresholded.jpg").toString());
+
+//            Apply Canny edge detection
+        Optional<Mat> optEdges = imageEdgeDetectionService
+                .applyCanny(thresholded, threshold, threshold * 3);
+        if (optEdges.isEmpty()) return Optional.empty();
+        Mat edges = optEdges.get();
+        imageIOService.writeImage(edges, Paths.get(debugDirPath, "4. edges.jpg").toString());
+        log.info("Object detection with Canny was completed");
+        return Optional.of(edges);
     }
 }
